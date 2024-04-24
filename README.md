@@ -5,11 +5,11 @@
 Welcome, this is the fullstack assignment for engineering positions at Lepaya.
 
 ---
-Please, read the task carefully and using **Javascript**/**ECMAscript** or **Typescript** proceed to craft a solution by building the following deliverables:
+Please, read the task carefully and using **Typescript** (or **Javascript**/**ECMAscript** when applicable) proceed to craft a solution by building the following deliverables:
 
  1. A frontend (React) application
  2. An API server to support the frontend
- 3. Clear instructions or running your solution
+ 3. Clear instructions on how to run your solution
  4. Answers to some technical questions
 
  Each deliverable will be explained further in this document.
@@ -137,8 +137,6 @@ Please answer the following questions in a markdown file called **"ANSWERS.md"**
 4. Have you learned something new doing this test? If yes, describe it here.
 
 5. Describe yourself using JSON.
-
----
 
 ## Final tips
 
