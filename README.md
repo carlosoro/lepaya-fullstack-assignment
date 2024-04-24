@@ -40,7 +40,7 @@ Fruityvice is a free public API where you can get information on certain fruits,
 More information on https://www.fruityvice.com/
 
 ### 2. Provided Database
-The database that they use to keep track of fruit is provided to you as a PostreSQL db defined in the docker-compose.yml
+The database that they use to keep track of fruit is provided to you as a PostgreSQL database defined in the docker-compose.yml
 
 To run it just, 
 ```docker-compose up -d```
