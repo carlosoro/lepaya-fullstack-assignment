@@ -109,14 +109,14 @@ We would however prefer you use React as a basis for the frontend, if that is an
 ## 2. API
 We envision you will probably need two endpoints to satisfy the Frontend requirements ( maybe ```/purchase``` and  ```/report``` ).
 
-Having said that, you do have the full freedom to organize how much endpoints you need and however you want to organize them, as long as the frontend requirements are satisfied.
+Having said that, you do have the full freedom to organize how many endpoints you need and however you want to organize them, as long as the frontend requirements are satisfied.
 
-You are free to use any out of the box server or any libraries you want, we'd suggest probably express or koa.
+You are free to use any out of the box server or any libraries you want; we'd suggest `express` or `koa`.
 
-You DO NOT need to provide endpoints to  get a list of office locations or available fruits. If you don't have the time or energy feel free to hardcode these lists, this will not be taken into consideration. The way you do hardcode them, probably will.
+You DO NOT need to provide endpoints to get a list of office locations or available fruits. If you don't have the time or energy feel free to hardcode these lists, this will not be taken into consideration. The way you do hardcode them, will.
 
 ## 3. A nice way to run your solution
-Please provide a concise one or two line command to start your project.
+Please, **provide a concise one or two line command to start your project**.
 If any explanation is necessary please create a HOWTO.md and explain how to run your solution.
 
 ## 4. Answers to technical questions
@@ -124,13 +124,13 @@ Please answer the following questions in a markdown file called **"ANSWERS.md"**
 
 1. How long did you spend on the coding test? 
 
-1. What would you add to your solution if you had more time? If you didn't spend much time on the coding test then use this as an opportunity to explain what you would add.
+2. What would you add to your solution if you had more time? If you didn't spend much time on the coding test then use this as an opportunity to explain what you would add.
 
-1. Describe your solution in plain english. Point out your design decisions and the reasoning behind them.
+3. Describe your solution in plain english. Point out your design decisions and the reasoning behind them.
 
-1. Have you learned something new doing this test? If yes, describe it here.
+4. Have you learned something new doing this test? If yes, describe it here.
 
-1. Describe yourself using JSON.
+5. Describe yourself using JSON.
 ---
 ---
 # Final tips
