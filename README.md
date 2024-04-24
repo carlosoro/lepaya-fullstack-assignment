@@ -9,7 +9,7 @@ Please, read the task carefully and using **Javascript**/**ECMAscript** or **Typ
  1. A frontend (React) application
  2. An API server to support the frontend
  3. Clear instructions or running your solution
- 4. Answers to some techincal questions 
+ 4. Answers to some technical questions 
 
  Each deliverable will be explained further in this document.
 
@@ -20,7 +20,7 @@ Please, read the task carefully and using **Javascript**/**ECMAscript** or **Typ
  ---
  Feel free to use any publicly available libraries that you are comfortable with, both for the frontend and backend part, and try to use software development best practices as you would in any sort of professional project.
 
- Also, don't stress, the assignment is tested by humans so it won't fail automatically due to a minor issue and will be a starting point for a conversation where you can explain your decisions and get feedback on your solution.
+ Also, don't stress, the assignment is tested by humans, so it won't fail automatically due to a minor issue and will be a starting point for a conversation where you can explain your decisions and get feedback on your solution.
  
  Good luck, and have fun!
 
@@ -31,7 +31,7 @@ Let's imagine a scaleup in the candy-space called Chocolate Inc.
 
 Due to providing what the people want most, quality chocolate, it has grown from a small kitchen to having offices in several locations across Europe and the UK.
 
-Like any other thriving organization, it tries to keep it's personnel happy and healthy, and away from the tasty chocolate, by providing fresh fruit in all of its offices.
+Like any other thriving organization, it tries to keep its personnel happy and healthy, and away from the tasty chocolate, by providing fresh fruit in all of its offices.
 
 Your task will be to build an application that will help the office managers at Chocolate Inc. track the fruit purchasing and consumption.
 
@@ -66,11 +66,12 @@ It holds 3 tables
  Records with a negative integer in the **amount** column would represent the number of certain fruits that were eaten at an office, while the ones with the positive amounts would represent the purchase of those fruits at the office.
 
 ---
-Example: 
-|fruit_id|location_id|amount|time|
-|--------|-----------|------|----|
-|3|2|4|2018-06-09 20:00:03.629 +0200|
-|3|1|-2|2017-05-09 23:33:15.233 +0200|
+Example:
+
+| fruit_id | location_id | amount| time                          |
+|----------|-------------|-------|-------------------------------|
+| 3        | 2           | 4     | 2018-06-09 20:00:03.629 +0200 |
+| 3        | 1           |-2     | 2017-05-09 23:33:15.233 +0200 |
 
 Where the first row represents the replenishing of apples (fruit #3), at the Berlin office by purchasing 4 pieces.
 
