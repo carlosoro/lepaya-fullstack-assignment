@@ -12,6 +12,10 @@ Please, read the task carefully and using **Javascript**/**ECMAscript** or **Typ
  4. Answers to some techincal questions 
 
  Each deliverable will be explained further in this document.
+
+
+ Please provide them by forking this repository, and then submitting a Pull Request to the repo.
+---
  
  ---
  Feel free to use any publicly available libraries that you are comfortable with, both for the frontend and backend part, and try to use software development best practices as you would in any sort of professional project.
