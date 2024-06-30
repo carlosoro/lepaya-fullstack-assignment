@@ -1,4 +1,4 @@
-import { Ledger } from 'src/ledgers/entities/ledger.entity';
+import { Ledger } from './../ledgers/entities/ledger.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn } from 'typeorm';
 
 @Entity({ name: 'fruits'})

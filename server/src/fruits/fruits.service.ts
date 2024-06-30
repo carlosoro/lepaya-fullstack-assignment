@@ -1,20 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { GetReportDto } from './dtos/getReport.dto';
-import { LedgersService } from 'src/ledgers/ledgers.service';
-import { Ledger } from 'src/ledgers/entities/ledger.entity';
-import { LocationsService } from 'src/locations/locations.service';
-import { Location } from 'src/locations/location.entity';
-
-type FruitConsumption = {
-    fruitId: number,
-    amount: number,
-    name: string,
-}
-
-type FruitReport = {
-    mostConsumedFruit: FruitConsumption,
-    averageFruitConsumption: number,
-}
+import { LedgersService } from './../ledgers/ledgers.service';
+import { Ledger } from './../ledgers/entities/ledger.entity';
+import { LocationsService } from './../locations/locations.service';
+import { Location } from './../locations/location.entity';
+import { FruitConsumption, FruitReport } from './types';
 
 @Injectable()
 export class FruitsService {
@@ -28,6 +18,12 @@ export class FruitsService {
             year: getReportDto.year,
             locationId: getReportDto.locationId
         });
+        if (!consumptions.length) {
+            return {
+                mostConsumedFruit: null,
+                averageFruitConsumption: 0,
+            };
+        }
         const mostConsumedFruit: FruitConsumption = this.getMostConsumedFruit(consumptions);
         const averageFruitConsumption: number = await this.getAverageFruitConsumption(consumptions, getReportDto.locationId);
         return {
@@ -59,6 +55,9 @@ export class FruitsService {
 
     private async getAverageFruitConsumption(consumedFruits: Ledger[], locationId: number): Promise<number> {
         const location: Location = await this.locationsService.getLocationById(locationId);
+        if (!location) {
+            return 0;
+        }
         const totalConsumption: number = consumedFruits.reduce((total: number, consumedFruit: Ledger): number => {
             return consumedFruit.amount < 0 ? total + Math.abs(consumedFruit.amount) : total;
         }, 0);

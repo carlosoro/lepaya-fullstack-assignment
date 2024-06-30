@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Ledger } from "./entities/ledger.entity";
 import { Between, LessThan, Repository } from "typeorm";
-import ConsumptionFilters from "./types/consumptionFilters";
+import { ConsumptionFilters } from "./types";
 
 @Injectable()
 export class LedgersRepository {
