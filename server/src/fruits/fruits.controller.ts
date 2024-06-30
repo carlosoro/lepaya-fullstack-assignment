@@ -10,6 +10,7 @@ export class FruitsController {
     @Get('reports')
     @UsePipes(new ValidationPipe({ transform: true }))
     getFruitReports(@Query() getReportDto: GetReportDto) {
-        const reports = this.fruitsService.getFruitReports();
+        const reports = this.fruitsService.getFruitReports(getReportDto);
+        return reports;
     }
 }

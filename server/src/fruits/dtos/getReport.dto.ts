@@ -5,7 +5,7 @@ export class GetReportDto {
 
     @IsInt()
     @Type(() => Number)
-    location_id: number;
+    locationId: number;
 
     @IsInt()
     @Type(() => Number)
