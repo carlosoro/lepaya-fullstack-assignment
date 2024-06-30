@@ -10,7 +10,8 @@ export class FruitsService {
         private fruitsRepository: Repository<Fruit>,
     ) { }
 
-    findAll(): Promise<Fruit[]> {
-        return this.fruitsRepository.find();
+    getFruitReports() {
+        //get all ledgers for the fruit_id, location and year
+        return 'report';
     }
 }

@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Fruit {
-    @Column()
+    @PrimaryGeneratedColumn('increment')
     id: number;
 
     @Column()
