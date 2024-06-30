@@ -5,12 +5,16 @@ import { Ledger } from './../ledgers/entities/ledger.entity';
 import { LocationsService } from './../locations/locations.service';
 import { Location } from './../locations/location.entity';
 import { FruitConsumption, FruitReport } from './types';
+import { FruityViceClient } from './clients/fruityvice.client';
+import { FruitsRepository } from './fruits.repository';
 
 @Injectable()
 export class FruitsService {
     constructor(
         private readonly ledgersService: LedgersService,
         private readonly locationsService: LocationsService,
+        private readonly fruitsRepository: FruitsRepository,
+        private readonly fruityViceClient: FruityViceClient
     ) { }
 
     async getFruitReports(getReportDto: GetReportDto): Promise<FruitReport> {
@@ -30,6 +34,12 @@ export class FruitsService {
             mostConsumedFruit,
             averageFruitConsumption,
         };
+    }
+
+    async getFruitNutritionalValue(fruitId: number) {
+        const fruit = this.fruitsRepository.getById(fruitId);
+        console.log(fruit);
+        // const fruit = await this.fruityViceClient.getFruitById(fruitId);
     }
 
     private getMostConsumedFruit(consumedFruits: Ledger[]): FruitConsumption | null {
