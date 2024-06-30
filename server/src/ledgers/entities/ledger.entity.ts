@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Fruit } from 'src/fruits/fruit.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity({ name: 'ledgers'})
 export class Ledger {
@@ -16,4 +17,8 @@ export class Ledger {
 
     @Column({ type: 'timestamptz', nullable: false })
     time: string;
+
+    @ManyToOne(() => Fruit, (fruit) => fruit.id, { eager: true })
+    @JoinColumn({ name: 'fruit_id' })
+    fruit: Fruit;
 }

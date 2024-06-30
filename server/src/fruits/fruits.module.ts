@@ -4,11 +4,13 @@ import { FruitsService } from './fruits.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Fruit } from './fruit.entity';
 import { LedgersModule } from 'src/ledgers/ledgers.module';
+import { LocationsModule } from 'src/locations/locations.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([Fruit]),
-        LedgersModule
+        LedgersModule,
+        LocationsModule
     ],
     controllers: [FruitsController],
     providers: [FruitsService]

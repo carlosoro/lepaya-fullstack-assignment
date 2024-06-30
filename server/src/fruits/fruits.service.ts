@@ -2,30 +2,42 @@ import { Injectable } from '@nestjs/common';
 import { GetReportDto } from './dtos/getReport.dto';
 import { LedgersService } from 'src/ledgers/ledgers.service';
 import { Ledger } from 'src/ledgers/entities/ledger.entity';
-import { get } from 'http';
+import { LocationsService } from 'src/locations/locations.service';
+import { Location } from 'src/locations/location.entity';
 
-type MostConsumedFruit = {
+type FruitConsumption = {
     fruitId: number,
     amount: number,
+    name: string,
+}
+
+type FruitReport = {
+    mostConsumedFruit: FruitConsumption,
+    averageFruitConsumption: number,
 }
 
 @Injectable()
 export class FruitsService {
     constructor(
         private readonly ledgersService: LedgersService,
+        private readonly locationsService: LocationsService,
     ) { }
 
-    async getFruitReports(getReportDto: GetReportDto) {
+    async getFruitReports(getReportDto: GetReportDto): Promise<FruitReport> {
         const consumptions = await this.ledgersService.getConsumptions({
             year: getReportDto.year,
             locationId: getReportDto.locationId
         });
-        const mostConsumedFruit = this.getMostConsumedFruit(consumptions);
-        return mostConsumedFruit;
+        const mostConsumedFruit: FruitConsumption = this.getMostConsumedFruit(consumptions);
+        const averageFruitConsumption: number = await this.getAverageFruitConsumption(consumptions, getReportDto.locationId);
+        return {
+            mostConsumedFruit,
+            averageFruitConsumption,
+        };
     }
 
-    private getMostConsumedFruit(consumedFruits: Ledger[]): MostConsumedFruit | null {
-        const consumptionByFruit = [];
+    private getMostConsumedFruit(consumedFruits: Ledger[]): FruitConsumption | null {
+        const consumptionByFruit: FruitConsumption[] = [];
         if (!consumedFruits.length) {
             return null;
         }
@@ -35,6 +47,7 @@ export class FruitsService {
                 consumptionByFruit.push({
                     fruitId: consumedFruit.fruit_id,
                     amount: Math.abs(consumedFruit.amount),
+                    name: consumedFruit.fruit.name,
                 });
             } else {
                 consumptionByFruit[index].amount += Math.abs(consumedFruit.amount);
@@ -42,5 +55,13 @@ export class FruitsService {
         });
         consumptionByFruit.sort((a, b) => b.amount - a.amount);
         return consumptionByFruit[0];
+    }
+
+    private async getAverageFruitConsumption(consumedFruits: Ledger[], locationId: number): Promise<number> {
+        const location: Location = await this.locationsService.getLocationById(locationId);
+        const totalConsumption: number = consumedFruits.reduce((total: number, consumedFruit: Ledger): number => {
+            return consumedFruit.amount < 0 ? total + Math.abs(consumedFruit.amount) : total;
+        }, 0);
+        return totalConsumption / location.headcount;
     }
 }

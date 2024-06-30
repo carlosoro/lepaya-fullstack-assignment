@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Ledger } from 'src/ledgers/entities/ledger.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'fruits'})
 export class Fruit {
     @PrimaryGeneratedColumn('increment')
     id: number;
@@ -10,4 +11,8 @@ export class Fruit {
 
     @Column()
     fruityvice_id: number;
+
+    @OneToMany(() => Ledger, (ledger) => ledger.fruit_id)
+    @JoinColumn({ name: 'id' })
+    ledgers: Ledger[];
 }
