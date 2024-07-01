@@ -8,7 +8,7 @@ describe('FruitsService', () => {
   let fruitsRepository: FruitsRepository;
   let fruityViceClient: FruityViceClient;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         FruitsService,
