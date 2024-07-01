@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FruitsModule } from './fruits/fruits.module';
 import { LocationsModule } from './locations/locations.module';
 import { LedgersModule } from './ledgers/ledgers.module';
-import database from './config/database';
+import database from './config/database.config';
 
 @Module({
   imports: [

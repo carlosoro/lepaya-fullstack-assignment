@@ -8,7 +8,6 @@ import { GetReportDto } from './dtos/getReport.dto';
 import { Location } from './../locations/location.entity';
 import { Consumption, Report } from './types';
 import { LocationsService } from './../locations/locations.service';
-import { FruitNutricionalInfo } from 'src/fruits/types';
 
 @Injectable()
 export class LedgersService {
@@ -20,19 +19,20 @@ export class LedgersService {
     ) { }
 
     async createPurchase(createPurchaseDto: CreatePurchaseDto): Promise<InsertedPurchase> {
-        const fruitNutritionalValue: FruitNutricionalInfo = await this.fruitsService.getFruitNutritionalValue(createPurchaseDto.fruitId);
-        const totalCalories: number = fruitNutritionalValue.calories * createPurchaseDto.amount;
-        if (totalCalories > 1000) {
-            throw new Error('Calories limit exceeded, is not possible to register this purchase');
-        }
         try {
-             return this.ledgersRepository.createPurchase(createPurchaseDto);
+            const fruitNutritionalValue = await this.fruitsService.getFruitNutritionalValue(createPurchaseDto.fruitId);
+            const totalCalories = fruitNutritionalValue.calories * createPurchaseDto.amount;
+            if (totalCalories > 1000) {
+                throw new Error('Calories limit exceeded, is not possible to register this purchase');
+            }
+             return await this.ledgersRepository.createPurchase(createPurchaseDto);
         } catch (error) {
-            throw new Error('An error occurred while creating the purchase');
+            //TODO: add logging here
+            throw error;
         }
     }
 
-    async getFruitReports(getReportDto: GetReportDto): Promise<Report> {
+    async getConsumptionReports(getReportDto: GetReportDto): Promise<Report> {
         const consumptions = await this.getConsumptions({
             year: getReportDto.year,
             locationId: getReportDto.locationId

@@ -8,8 +8,9 @@ describe('LedgersService', () => {
   let service: LedgersService;
   let ledgersRepository: LedgersRepository;
   let locationsService: LocationsService
+  let fruitsService: FruitsService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LedgersService,
@@ -37,6 +38,7 @@ describe('LedgersService', () => {
     service = module.get<LedgersService>(LedgersService);
     ledgersRepository = module.get<LedgersRepository>(LedgersRepository);
     locationsService = module.get<LocationsService>(LocationsService);
+    fruitsService = module.get<FruitsService>(FruitsService);
   });
 
   afterEach(() => jest.clearAllMocks());
@@ -45,7 +47,7 @@ describe('LedgersService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('getFruitReports', () => {
+  describe('getConsumptionReports', () => {
     it('should return an a default response when no consumptions are found', async () => {
       ledgersRepository.getConsumptions = jest.fn().mockResolvedValue([]);
       const expectedResponse = {
@@ -53,7 +55,7 @@ describe('LedgersService', () => {
         averageFruitConsumption: 0
       };
       const getReportDto = { year: 2021, locationId: 1 };
-      const result = await service.getFruitReports(getReportDto);
+      const result = await service.getConsumptionReports(getReportDto);
       expect(result).toEqual(expectedResponse);
     });
 
@@ -75,7 +77,7 @@ describe('LedgersService', () => {
         averageFruitConsumption: 1
       };
       const getReportDto = { year: 2021, locationId: 1 };
-      const result = await service.getFruitReports(getReportDto);
+      const result = await service.getConsumptionReports(getReportDto);
       expect(result).toEqual(expectedResponse);
     });
 
@@ -91,8 +93,34 @@ describe('LedgersService', () => {
         averageFruitConsumption: 0
       };
       const getReportDto = { year: 2021, locationId: 1 };
-      const result = await service.getFruitReports(getReportDto);
+      const result = await service.getConsumptionReports(getReportDto);
       expect(result).toEqual(expectedResponse);
+    });
+  });
+
+  describe('createPurchase', () => {
+    it('should throw error when total fruit calories exceed 1000 kcal', async () => {
+      fruitsService.getFruitNutritionalValue = jest.fn().mockResolvedValue({
+        calories: 1000
+      });
+      const createPurchaseDto = { fruitId: 1, locationId: 1, amount: 2 };
+      await expect(
+        service.createPurchase(createPurchaseDto)
+      ).rejects
+        .toThrow('Calories limit exceeded, is not possible to register this purchase');
+    });
+
+    it('should throw an error if an error occurs during purchase creation', async () => {
+      ledgersRepository.createPurchase = jest.fn().mockRejectedValue(new Error('Error message'));
+      fruitsService.getFruitNutritionalValue = jest.fn().mockResolvedValue({
+        calories: 10
+      });
+      const createPurchaseDto = { fruitId: 1, locationId: 1, amount: 2 };
+      expect(async () => {
+        await service.createPurchase(createPurchaseDto)
+      }).rejects.toThrow(
+        'Error message'
+      );
     });
   });
 });

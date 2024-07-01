@@ -8,7 +8,7 @@ describe('LedgersController', () => {
   let controller: LedgersController;
   let ledgersService: LedgersService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [LedgersController],
       providers: [
@@ -16,7 +16,7 @@ describe('LedgersController', () => {
         {
           provide: LedgersService,
           useValue: {
-            getFruitReports: jest.fn()
+            getConsumptionReports: jest.fn()
           }
         },
         {
@@ -32,40 +32,58 @@ describe('LedgersController', () => {
     ledgersService = module.get<LedgersService>(LedgersService);
   });
 
+  afterEach(() => jest.clearAllMocks());
+
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should throw an http exception error when an error occurs while getting the report', async () => {
-    const getReportDto = { year: 2021, locationId: 1 };
-
-    jest.spyOn(ledgersService, 'getFruitReports').mockImplementation(() => {
-      throw Error('Internal server error');
+  describe('getFruitReports', () => {
+    it('should throw an http exception error when an error occurs while getting the report', async () => {
+      const getReportDto = { year: 2021, locationId: 1 };
+      ledgersService.getConsumptionReports = jest.fn().mockRejectedValue(new Error('Internal server error'));
+      expect(async () => {
+        await controller.getFruitReports(getReportDto)
+      }).rejects.toThrow(
+        new HttpException(
+          'An error occurred while getting the report',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ),
+      );
     });
 
-    expect(() => {
-      controller.getFruitReports(getReportDto)
-    }).toThrow(
-      new HttpException(
-        'An error occurred while getting the report',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      ),
-    );
+    it('should return valid object', async () => {
+      const getReportDto = { year: 2024, locationId: 1 };
+      const expectedResponse = {
+        mostConsumedFruit: {
+          fruitId: 1,
+          amount: 100,
+          name: 'Apple',
+        },
+        averageFruitConsumption: 10,
+      };
+      ledgersService.getConsumptionReports = jest.fn().mockResolvedValue(expectedResponse);
+      const response = controller.getFruitReports(getReportDto)
+      expect(response).resolves.toEqual(expectedResponse);
+    });
   });
 
-  it('should return valid object', async () => {
-    const getReportDto = { year: 2024, locationId: 1 };
-    const expectedResponse = {
-      mostConsumedFruit: {
+  describe('createPurchase', () => {
+    it('should throw http error when an error is throw while creating the purchase', async () => {
+      ledgersService.createPurchase = jest.fn().mockRejectedValue(new Error('Error message'));
+      const createPurchaseDto = {
         fruitId: 1,
-        amount: 100,
-        name: 'Apple',
-      },
-      averageFruitConsumption: 10,
-    };
-    ledgersService.getFruitReports = jest.fn().mockResolvedValue(expectedResponse);
-    const response = controller.getFruitReports(getReportDto)
-    expect(response).resolves.toEqual(expectedResponse);
+        locationId: 1,
+        amount: 10
+      };
+      expect(async () => {
+        await controller.createPurchase(createPurchaseDto)
+      }).rejects.toThrow(
+        new HttpException(
+          'An error occurred while creating the purchase',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ),
+      );
+    });
   });
-
 });

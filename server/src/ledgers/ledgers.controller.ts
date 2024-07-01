@@ -13,9 +13,9 @@ export class LedgersController {
 
     @Get('reports')
     @UsePipes(new ValidationPipe({ transform: true }))
-    getFruitReports(@Query() getReportDto: GetReportDto): Promise<Report> | HttpException {
+    async getFruitReports(@Query() getReportDto: GetReportDto): Promise<Report | HttpException> {
         try {
-            return this.ledgersService.getFruitReports(getReportDto);
+            return await this.ledgersService.getConsumptionReports(getReportDto);
         } catch (error) {
             throw new HttpException(
                 'An error occurred while getting the report',
@@ -25,9 +25,9 @@ export class LedgersController {
     }
 
     @Post('purchases')
-    createPurchase(@Body(ValidationPipe) createPurchaseDto: CreatePurchaseDto): Promise<InsertedPurchase> | HttpException{
+    async createPurchase(@Body(ValidationPipe) createPurchaseDto: CreatePurchaseDto): Promise<InsertedPurchase | HttpException>{
         try {
-            return this.ledgersService.createPurchase(createPurchaseDto);
+            return await this.ledgersService.createPurchase(createPurchaseDto);
         } catch (error) {
             throw new HttpException(
                 'An error occurred while creating the purchase',
