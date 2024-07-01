@@ -1,8 +1,10 @@
 import { HttpService } from "@nestjs/axios";
 import { ConfigService } from "@nestjs/config";
 import { AxiosResponse } from "axios";
-import { FruityViceResponse } from "../types";
+import { FruitStats } from "../types";
+import { Injectable } from "@nestjs/common";
 
+@Injectable()
 export class FruityViceClient {
 
     constructor(
@@ -10,11 +12,13 @@ export class FruityViceClient {
         private readonly httpService: HttpService
     ) {}
 
-    getFruitStats(fruitName: string){
-    //Promise<AxiosResponse<FruityViceResponse>> 
-    //{
+    async getById(fruityId: number): Promise<FruitStats> | null {
         const baseUrl = this.configService.get<string>('fruityvice.baseUrl');
-        const response = this.httpService.axiosRef.get(`${baseUrl}/api/fruit/${fruitName}`);
-        console.log(response);
+        try {
+            const response =  await this.httpService.axiosRef.get(`${baseUrl}/api/fruit/${fruityId}`);
+            return response.data;
+        } catch (error) {
+            return null;
+        }
     }
 }

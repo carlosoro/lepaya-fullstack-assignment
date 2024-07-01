@@ -9,16 +9,16 @@ export type FruitReport = {
     averageFruitConsumption: number,
 }
 
-export type FruityViceResponse = {
+export type FruitStats = {
     name: string,
     id: number,
     family: string,
     order: string,
     genus: string,
-    nutritions: FruityViceNutricionalInfo
+    nutritions: FruitNutricionalInfo
 }
 
-export type FruityViceNutricionalInfo = {
+export type FruitNutricionalInfo = {
     calories: number,
     fat: number,
     sugar: number,
