@@ -22,3 +22,14 @@ export interface MostConsumedFruit {
 export interface FruitCreationResponse {
     id: number
 }
+
+export interface Location {
+    id: number;
+    name: string;
+    headcount: number;
+}
+
+export interface Fruit {
+    id: number;
+    name: string;
+}

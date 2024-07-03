@@ -1,57 +1,57 @@
 import { Alert, Button, Col, Form } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import { createPurchase } from "../services/ledgersService";
+import { createPurchase, getLocations, getFruits } from "../services/ledgersService";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
+import { Location, Fruit, AlertState } from "../types";
 
 function FruitPurchase() {
 
+    const [locations, setLocations] = useState<Location[]>([]);
+    const [fruits, setFruits] = useState<Fruit[]>([]);
     const [selectedPurchaseLocation, setSelectedPurchaseLocation] = useState<number>(0);
     const [selectedFruit, setSelectedFruit] = useState<number>(0);
     const [fruitAmount, setFruitAmount] = useState<number>(0);
     const [formSubmitDisabled, setFormSubmitDisabled] = useState<boolean>(true);
-    const [showFormError, setShowFormError] = useState<boolean>(false);
-    const [errorAlertMessage, setErrorAlertMessage] = useState<string>('');
-    const [alertState, setAlertState] = useState<{
-        show: boolean,
-        header: string,
-        message: string,
-        type: 'success' | 'danger'
-    }>({ show: false, header: 'Oh snap! You got an error!', message: '', type: 'danger' });
+    const [alertState, setAlertState] = useState<AlertState>({
+        show: false,
+        header: 'Oh snap! You got an error!',
+        message: '',
+        type: 'danger'
+    });
 
-    const locations = [
-        { id: 1, name: 'Amsterdam', headcount: 200 },
-        { id: 2, name: 'Berlin', headcount: 100 },
-        { id: 3, name: 'Paris', headcount: 20 },
-        { id: 4, name: 'London', headcount: 50 },
-    ];
+    useEffect(() => {
+        const getLocationOptions = async () => {
+            const response = await getLocations();
+            setLocations(response);
+        }
+        const getFruitOptions = async () => {
+            const response = await getFruits();
+            setFruits(response);
+        }
+        getLocationOptions();
+        getFruitOptions();
+    }, [])
 
     useEffect(() => {
         setFormSubmitDisabled(!isFormValid());
+        resetAlertState();
+    }, [selectedPurchaseLocation, selectedFruit, fruitAmount]);
+
+    const resetAlertState = () => {
         setAlertState({
             show: false,
             header: 'Oh snap! You got an error!',
             message: '',
-            type: 'success'
+            type: 'danger'
         });
-    }, [selectedPurchaseLocation, selectedFruit, fruitAmount]);
+    }
 
     const isFormValid = (): boolean => {
         return selectedPurchaseLocation !== 0
             && selectedFruit !== 0
             && fruitAmount > 0;
     }
-
-    const fruits = [
-        { id: 1, name: 'Lime' },
-        { id: 2, name: 'Tangerine' },
-        { id: 3, name: 'Apple' },
-        { id: 4, name: 'Mango' },
-        { id: 5, name: 'Plum' },
-        { id: 6, name: 'Pineapple' },
-        { id: 7, name: 'Kiwi' },
-        { id: 8, name: 'Pear' },
-    ];
 
     const handlePurchaseLocationChange = (event: BaseSyntheticEvent) => {
         setSelectedPurchaseLocation(event.target.value);
@@ -92,7 +92,7 @@ function FruitPurchase() {
                 });
             }
         } catch (error) {
-            const message = (error as Error)?.message || 'An error occurred while generating the report.';
+            const message = (error as Error)?.message || 'An error occurred while Creating the purchase.';
             setAlertState({ show: true, header: 'Oh snap! You got an error!', message, type: 'danger' });
         }
     }
@@ -108,7 +108,7 @@ function FruitPurchase() {
                 <Row>
                     <Col>
                         {alertState.show &&
-                            <Alert variant={alertState.type} onClose={() => setShowFormError(false)} dismissible>
+                            <Alert variant={alertState.type} onClose={() => resetAlertState()} dismissible>
                                 <Alert.Heading>{alertState.header}</Alert.Heading>
                                 <p>
                                     {(alertState.message) ?
@@ -128,7 +128,7 @@ function FruitPurchase() {
                                 <option value="0">Select a location</option>
                                 {locations.map(location =>
                                     <option
-                                        key={location.id + 21}
+                                        key={location.id}
                                         value={location.id}
                                     >
                                         {location.name}
@@ -146,7 +146,7 @@ function FruitPurchase() {
                                 <option value="0">Select a fruit</option>
                                 {fruits.map(fruit =>
                                     <option
-                                        key={fruit.id + 100}
+                                        key={fruit.id}
                                         value={fruit.id}
                                     >
                                         {fruit.name}

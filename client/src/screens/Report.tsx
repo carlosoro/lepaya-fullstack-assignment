@@ -1,48 +1,56 @@
 import { Alert, Button, Card, Col, Form } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import { getReport } from "../services/ledgersService";
+import { getReport, getLocations } from "../services/ledgersService";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
-import { FruitReportResponse } from "../types";
+import { FruitReportResponse, Location, AlertState } from "../types";
 
 function Report() {
+    const [locations, setLocations] = useState<Location[]>([]);
     const [selectedLocation, setSelectedLocation] = useState<number>(0);
     const [selectedYear, setSelectedYear] = useState<number>(0);
     const [reportResult, setReportResult] = useState<FruitReportResponse | null>(null);
     const [formSubmitDisabled, setFormSubmitDisabled] = useState<boolean>(true);
-    const [showFormError, setShowFormError] = useState<boolean>(false);
-    const [errorAlertMessage, setErrorAlertMessage] = useState<string>('');
+    const [alertState, setAlertState] = useState<AlertState>({
+        show: false,
+        header: 'Oh snap! You got an error!',
+        message: '',
+        type: 'danger'
+    });
 
     useEffect(() => {
         setFormSubmitDisabled(!isFormValid());
+        resetAlertState();
     }, [selectedLocation, selectedYear]);
 
-    const locations = [
-        { id: 1, name: 'Amsterdam', headcount: 200 },
-        { id: 2, name: 'Berlin', headcount: 100 },
-        { id: 3, name: 'Paris', headcount: 20 },
-        { id: 4, name: 'London', headcount: 50 },
-    ];
+    useEffect(() => {
+        const getLocationOptions = async () => {
+            const response = await getLocations();
+            setLocations(response);
+        }
+        getLocationOptions();
+    }, [])
 
     const years = [2016, 2017, 2018, 2019, 2020, 2021, 2022];
 
 
     const handleLocationChange = (event: BaseSyntheticEvent) => {
         setSelectedLocation(Number(event.target.value));
-        setErrorAlertMessage('');
-        setShowFormError(false);
     }
 
     const handleYearChange = (event: BaseSyntheticEvent) => {
         setSelectedYear(Number(event.target.value));
-        setErrorAlertMessage('');
-        setShowFormError(false);
     }
 
     const handleSubmit = async () => {
         try {
             if (!isFormValid()) {
-                setShowFormError(true);
+                setAlertState({
+                    show: true,
+                    header: 'Oh snap! You got an error!',
+                    message: 'Make sure you selected filled all options and try again.',
+                    type: 'danger'
+                });
             }
             const response = await getReport(selectedLocation, selectedYear);
             if (response) {
@@ -50,11 +58,17 @@ function Report() {
             }
         } catch (error) {
             const message = (error as Error)?.message || 'An error occurred while generating the report.';
-            setErrorAlertMessage(message);
-            setShowFormError(true);
+            setAlertState({ show: true, header: 'Oh snap! You got an error!', message, type: 'danger' });
         }
     }
-
+    const resetAlertState = () => {
+        setAlertState({
+            show: false,
+            header: 'Oh snap! You got an error!',
+            message: '',
+            type: 'danger'
+        });
+    }
     const isFormValid = (): boolean => {
         return selectedLocation !== 0 && selectedYear !== 0;
     }
@@ -74,13 +88,13 @@ function Report() {
                 </Row>
                 <Row>
                     <Col>
-                        {showFormError &&
-                            <Alert variant="danger" onClose={() => setShowFormError(false)} dismissible>
-                                <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+                        {alertState.show &&
+                            <Alert variant={alertState.type} onClose={() => resetAlertState()} dismissible>
+                                <Alert.Heading>{alertState.header}</Alert.Heading>
                                 <p>
-                                    {(errorAlertMessage) ?
-                                        errorAlertMessage :
-                                        `Make sure you selected both location and year and try again.`
+                                    {(alertState.message) ?
+                                        alertState.message :
+                                        `Make sure you selected filled all options and try again.`
                                     }
                                 </p>
                             </Alert>
