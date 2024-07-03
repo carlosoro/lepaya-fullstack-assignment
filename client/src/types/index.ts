@@ -33,3 +33,10 @@ export interface Fruit {
     id: number;
     name: string;
 }
+
+export interface AlertState {
+    show: boolean,
+    header: string,
+    message: string,
+    type: 'success' | 'danger'
+}
