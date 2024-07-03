@@ -1,13 +1,16 @@
-import axios from 'axios';
+import { getFruitReport, createFruitPurchase } from '../clients/ledgersAPI';
+import { FruitCreationResponse, FruitReportResponse, Purchase } from '../types';
 
-export const getReport = async (locationId: number, year: number) => {
-    const url = `http://localhost:3000/ledgers/reports`;
+export const getReport = async (locationId: number, year: number): Promise<FruitReportResponse> => {
+    if (!locationId || !year) {
+        throw new Error('Invalid input provided');
+    }
+    return await getFruitReport(locationId, year);
+}
 
-    const response = await axios.get(url, {
-        params: {
-            locationId,
-            year
-        }
-    });
-    return response;
+export const createPurchase = async ({ locationId, fruitId, amount }: Purchase): Promise<FruitCreationResponse> => {
+    if (!locationId || !fruitId || !amount) {
+        throw new Error('Invalid input provided');
+    }
+    return createFruitPurchase({ locationId, fruitId, amount });
 }

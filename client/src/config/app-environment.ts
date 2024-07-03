@@ -1,0 +1,1 @@
+export const ledgersAPIUrl = import.meta.env.VITE_LEDGER_API_URL;
