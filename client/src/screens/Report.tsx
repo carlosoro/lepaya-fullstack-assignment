@@ -1,9 +1,12 @@
-import { Alert, Button, Card, Col, Form } from "react-bootstrap";
+import { Card, Col } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import { getReport, getLocations } from "../services/ledgersService";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { FruitReportResponse, Location, AlertState } from "../types";
+import CustomAlert from "../components/Alert";
+import Select from "../components/Select";
+import CustomButton from "../components/Button";
 
 function Report() {
     const [locations, setLocations] = useState<Location[]>([]);
@@ -83,65 +86,49 @@ function Report() {
             <Row>
                 <Row>
                     <Col>
-                        Consumption Report
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
                         {alertState.show &&
-                            <Alert variant={alertState.type} onClose={() => resetAlertState()} dismissible>
-                                <Alert.Heading>{alertState.header}</Alert.Heading>
-                                <p>
-                                    {(alertState.message) ?
-                                        alertState.message :
-                                        `Make sure you selected filled all options and try again.`
-                                    }
-                                </p>
-                            </Alert>
+                            <CustomAlert
+                                type={alertState.type}
+                                onClose={resetAlertState}
+                                header={alertState.header}
+                                message={alertState.message}
+                            />
                         }
                     </Col>
                 </Row>
                 <Row>
                     <Col>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Location</Form.Label>
-                            <Form.Select value={selectedLocation} onChange={handleLocationChange}>
-                                <option value="0">Select a location</option>
-                                {locations.map(location =>
-                                    <option
-                                        key={location.id}
-                                        value={location.id}
-                                    >
-                                        {location.name}
-                                    </option>
-                                )}
-                            </Form.Select>
-                        </Form.Group>
+                        <h2>Consumption Report</h2>
                     </Col>
                 </Row>
                 <Row>
                     <Col>
-                        <Form.Group className="mb-3" >
-                            <Form.Label>Year</Form.Label>
-                            <Form.Select value={selectedYear} onChange={handleYearChange}>
-                                <option value="0">Select a year</option>
-                                {years.map(year =>
-                                    <option
-                                        key={year}
-                                        value={year}
-                                    >
-                                        {year}
-                                    </option>
-                                )}
-                            </Form.Select>
-                        </Form.Group>
+                        <Select
+                            label="Location"
+                            value={selectedLocation}
+                            onChange={handleLocationChange}
+                            options={locations.map(location => ({ key: location.id, value: location.id, text: location.name }))}
+                        />
+
                     </Col>
                 </Row>
                 <Row>
                     <Col>
-                        <Form.Group className="mb-3" >
-                            <Button variant="primary" disabled={formSubmitDisabled ? true : false} onClick={handleSubmit}>Submit</Button>
-                        </Form.Group>
+                        <Select
+                            label="Year"
+                            value={selectedYear}
+                            onChange={handleYearChange}
+                            options={years.map(year => ({ key: year, value: year, text: year.toString() }))}
+                        />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <CustomButton
+                            variant='primary'
+                            isDisabled={formSubmitDisabled}
+                            onClick={handleSubmit}
+                            text="Submit" />
                     </Col>
                 </Row>
             </Row>
