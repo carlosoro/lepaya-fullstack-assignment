@@ -9,6 +9,12 @@ describe('LedgersService', () => {
   let ledgersRepository: LedgersRepository;
   let locationsService: LocationsService
   let fruitsService: FruitsService;
+  
+  const defaultConsumptions = [
+    { fruit_id: 1, location_id: 1, amount: -100, fruit: { name: 'Apple' }, time: '2021-07-06 22:50:52.557 +0200' },
+    { fruit_id: 1, location_id: 1, amount: -90, fruit: { name: 'Apple' }, time: '2021-07-07 22:50:52.557 +0200' },
+    { fruit_id: 2, location_id: 1, amount: -10, fruit: { name: 'Banana' }, time: '2021-07-08 22:50:52.557 +0200' },
+  ];
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -60,11 +66,7 @@ describe('LedgersService', () => {
     });
 
     it('should return the most consumed fruit and the average consumption', async () => {
-      ledgersRepository.getConsumptions = jest.fn().mockResolvedValue([
-        { fruit_id: 1, location_id: 1, amount: -100, fruit: { name: 'Apple' }, time: '2021-07-06 22:50:52.557 +0200' },
-        { fruit_id: 1, location_id: 1, amount: -90, fruit: { name: 'Apple' }, time: '2021-07-07 22:50:52.557 +0200' },
-        { fruit_id: 2, location_id: 1, amount: -10, fruit: { name: 'Banana' }, time: '2021-07-08 22:50:52.557 +0200' },
-      ]);
+      ledgersRepository.getConsumptions = jest.fn().mockResolvedValue(defaultConsumptions);
       locationsService.getLocationById = jest.fn().mockResolvedValue(
         {
           id: 1,
@@ -82,11 +84,7 @@ describe('LedgersService', () => {
     });
 
     it('should return averageFruitConsumption=0 if location is not retrieved', async () => {
-      ledgersRepository.getConsumptions = jest.fn().mockResolvedValue([
-        { fruit_id: 1, location_id: 1, amount: -100, fruit: { name: 'Apple' }, time: '2021-07-06 22:50:52.557 +0200' },
-        { fruit_id: 1, location_id: 1, amount: -90, fruit: { name: 'Apple' }, time: '2021-07-07 22:50:52.557 +0200' },
-        { fruit_id: 2, location_id: 1, amount: -10, fruit: { name: 'Banana' }, time: '2021-07-08 22:50:52.557 +0200' },
-      ]);
+      ledgersRepository.getConsumptions = jest.fn().mockResolvedValue(defaultConsumptions);
       locationsService.getLocationById = jest.fn().mockResolvedValue(null);
       const expectedResponse = {
         mostConsumedFruit: { fruitId: 1, amount: 190, name: 'Apple' },
