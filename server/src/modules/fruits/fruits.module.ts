@@ -3,7 +3,7 @@ import { FruitsService } from './fruits.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Fruit } from './fruit.entity';
 import { ConfigModule } from '@nestjs/config';
-import fruityviceConfig from 'src/config/fruityvice.config';
+import fruityviceConfig from '../../config/fruityvice.config';
 import { FruityViceClient } from './clients/fruityvice.client';
 import { HttpModule } from '@nestjs/axios';
 import { FruitsRepository } from './fruits.repository';

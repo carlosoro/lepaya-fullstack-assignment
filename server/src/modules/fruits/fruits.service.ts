@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { FruityViceClient } from './clients/fruityvice.client';
 import { FruitsRepository } from './fruits.repository';
 import { FruitNutricionalInfo } from './types';
+import { Fruit } from './fruit.entity';
 
 @Injectable()
 export class FruitsService {
@@ -26,6 +27,10 @@ export class FruitsService {
             };
         }
         return fruitStats.nutritions;
+    }
+
+    getFruitById(fruitId: number): Promise<Fruit> {
+        return this.fruitsRepository.getById(fruitId);
     }
 
 }
