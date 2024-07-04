@@ -17,5 +17,5 @@ const databaseConnection = {
     synchronize: false,
 }
 
-export default registerAs('database', () => databaseConnection);
+export default registerAs('databaseConfig', () => databaseConnection);
 export const connectionSource = new DataSource(databaseConnection as DataSourceOptions);

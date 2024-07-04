@@ -4,17 +4,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FruitsModule } from './modules/fruits/fruits.module';
 import { LocationsModule } from './modules/locations/locations.module';
 import { LedgersModule } from './modules/ledgers/ledgers.module';
-import database from './config/database.config';
+import databaseConfig from './config/database.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [database]
+      load: [databaseConfig]
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => (configService.get('database'))
+      useFactory: async (configService: ConfigService) => (configService.get('databaseConfig'))
     }),
     LedgersModule,
     FruitsModule,
