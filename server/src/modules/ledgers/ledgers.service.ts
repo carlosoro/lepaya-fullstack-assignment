@@ -49,8 +49,8 @@ export class LedgersService {
                     averageFruitConsumption: 0,
                 };
             }
-            const mostConsumedFruit: Consumption = this.getMostConsumedFruit(consumptions);
-            const averageFruitConsumption: number = await this.getAverageFruitConsumption(consumptions, getReportDto.locationId);
+            const mostConsumedFruit = this.getMostConsumedFruit(consumptions);
+            const averageFruitConsumption = await this.getAverageFruitConsumption(consumptions, getReportDto.locationId);
             return {
                 mostConsumedFruit,
                 averageFruitConsumption,

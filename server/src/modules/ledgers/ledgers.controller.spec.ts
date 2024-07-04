@@ -46,7 +46,7 @@ describe('LedgersController', () => {
         await controller.getFruitReports(getReportDto)
       }).rejects.toThrow(
         new HttpException(
-          'An error occurred while getting the report',
+          'Internal server error',
           HttpStatus.INTERNAL_SERVER_ERROR,
         ),
       );
@@ -80,7 +80,7 @@ describe('LedgersController', () => {
         await controller.createPurchase(createPurchaseDto)
       }).rejects.toThrow(
         new HttpException(
-          'An error occurred while creating the purchase',
+          'Error message',
           HttpStatus.INTERNAL_SERVER_ERROR,
         ),
       );
