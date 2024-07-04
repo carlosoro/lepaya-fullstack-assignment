@@ -8,6 +8,7 @@ import { GetReportDto } from './dtos/getReport.dto';
 import { Location } from '../locations/location.entity';
 import { Consumption, Report } from './types';
 import { LocationsService } from '../locations/locations.service';
+import { AppError } from '../../utils/appErrorHandler';
 
 @Injectable()
 export class LedgersService {
@@ -20,12 +21,16 @@ export class LedgersService {
 
     async createPurchase(createPurchaseDto: CreatePurchaseDto): Promise<InsertedPurchase> {
         try {
+            await this.validatePurchaseInput(createPurchaseDto);
             const fruitNutritionalValue = await this.fruitsService.getFruitNutritionalValue(createPurchaseDto.fruitId);
             const totalCalories = fruitNutritionalValue.calories * createPurchaseDto.amount;
             if (totalCalories > 1000) {
-                throw new Error('Calories limit exceeded, is not possible to register this purchase');
+                throw new AppError(
+                    'Calories limit exceeded, is not possible to register this purchase',
+                    400
+                );
             }
-             return await this.ledgersRepository.createPurchase(createPurchaseDto);
+            return await this.ledgersRepository.createPurchase(createPurchaseDto);
         } catch (error) {
             //TODO: add logging here
             throw error;
@@ -33,22 +38,27 @@ export class LedgersService {
     }
 
     async getConsumptionReports(getReportDto: GetReportDto): Promise<Report> {
-        const consumptions = await this.getConsumptions({
-            year: getReportDto.year,
-            locationId: getReportDto.locationId
-        });
-        if (!consumptions.length) {
+        try {
+            const consumptions = await this.getConsumptions({
+                year: getReportDto.year,
+                locationId: getReportDto.locationId
+            });
+            if (!consumptions.length) {
+                return {
+                    mostConsumedFruit: null,
+                    averageFruitConsumption: 0,
+                };
+            }
+            const mostConsumedFruit: Consumption = this.getMostConsumedFruit(consumptions);
+            const averageFruitConsumption: number = await this.getAverageFruitConsumption(consumptions, getReportDto.locationId);
             return {
-                mostConsumedFruit: null,
-                averageFruitConsumption: 0,
+                mostConsumedFruit,
+                averageFruitConsumption,
             };
+        } catch (error) {
+            //TODO: add logging here
+            throw error;
         }
-        const mostConsumedFruit: Consumption = this.getMostConsumedFruit(consumptions);
-        const averageFruitConsumption: number = await this.getAverageFruitConsumption(consumptions, getReportDto.locationId);
-        return {
-            mostConsumedFruit,
-            averageFruitConsumption,
-        };
     }
 
     private getConsumptions(consumptionFilters: ConsumptionFilters): Promise<Ledger[]> {
@@ -60,7 +70,7 @@ export class LedgersService {
         if (!consumedFruits.length) {
             return null;
         }
-        for(const consumedFruit of consumedFruits) {
+        for (const consumedFruit of consumedFruits) {
             const consumption = consumptionByFruit.find(fruit => fruit.fruitId === consumedFruit.fruit_id);
             if (!consumption) {
                 consumptionByFruit.push({
@@ -85,5 +95,22 @@ export class LedgersService {
             return consumedFruit.amount < 0 ? total + Math.abs(consumedFruit.amount) : total;
         }, 0);
         return totalConsumption / location.headcount;
+    }
+
+    private async validatePurchaseInput(createPurchaseDto: CreatePurchaseDto): Promise<void> {
+        const location = await this.locationsService.getLocationById(createPurchaseDto.locationId);
+        if (!location) {
+            throw new AppError(
+                'Location not found, is not possible to register this purchase',
+                400
+            );
+        }
+        const fruit = await this.fruitsService.getFruitById(createPurchaseDto.fruitId);
+        if (!fruit) {
+            throw new AppError(
+                'Fruit not found, is not possible to register this purchase',
+                400
+            );
+        }
     }
 }

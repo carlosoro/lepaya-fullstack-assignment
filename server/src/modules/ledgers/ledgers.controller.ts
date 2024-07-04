@@ -18,8 +18,8 @@ export class LedgersController {
             return await this.ledgersService.getConsumptionReports(getReportDto);
         } catch (error) {
             throw new HttpException(
-                'An error occurred while getting the report',
-                HttpStatus.INTERNAL_SERVER_ERROR
+                error.message || 'An error occurred while getting the report',
+                error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR
             )
         }
     }
@@ -30,8 +30,8 @@ export class LedgersController {
             return await this.ledgersService.createPurchase(createPurchaseDto);
         } catch (error) {
             throw new HttpException(
-                'An error occurred while creating the purchase',
-                HttpStatus.INTERNAL_SERVER_ERROR
+                error.message || 'An error occurred while getting the report',
+                error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR
             )
         }
     }
