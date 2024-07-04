@@ -72,9 +72,11 @@ describe('LedgersController', () => {
     it('should throw http error when an error is throw while creating the purchase', async () => {
       ledgersService.createPurchase = jest.fn().mockRejectedValue(new Error('Error message'));
       const createPurchaseDto = {
-        fruitId: 1,
         locationId: 1,
-        amount: 10
+        fruits: [{
+          fruitId: 1,
+          amount: 10
+        }]
       };
       expect(async () => {
         await controller.createPurchase(createPurchaseDto)

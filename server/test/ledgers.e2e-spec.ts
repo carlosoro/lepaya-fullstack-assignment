@@ -70,6 +70,10 @@ describe('Ledgers', () => {
         }
     }
 
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
     beforeAll(async () => {
         const moduleRef = await Test.createTestingModule({
             imports: [LedgersModule],
@@ -87,7 +91,6 @@ describe('Ledgers', () => {
 
         //Setup deep dependency for mock
         fruityViceClient = moduleRef.get(FruityViceClient);
-        console.log(fruityViceClient)
     });
 
     it(`/GET ledgers/reports returns valid report when valid input provided`, () => {

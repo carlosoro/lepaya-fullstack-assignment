@@ -9,11 +9,29 @@ describe('LedgersService', () => {
   let ledgersRepository: LedgersRepository;
   let locationsService: LocationsService
   let fruitsService: FruitsService;
-  
+
   const defaultConsumptions = [
     { fruit_id: 1, location_id: 1, amount: -100, fruit: { name: 'Apple' }, time: '2021-07-06 22:50:52.557 +0200' },
     { fruit_id: 1, location_id: 1, amount: -90, fruit: { name: 'Apple' }, time: '2021-07-07 22:50:52.557 +0200' },
     { fruit_id: 2, location_id: 1, amount: -10, fruit: { name: 'Banana' }, time: '2021-07-08 22:50:52.557 +0200' },
+  ];
+
+  const defaultPurchaseInput = {
+    locationId: 1,
+    fruits: [{ fruitId: 1, amount: 10 }]
+  };
+
+  const defaultFruitStats = [
+    {
+      id: 1,
+      fruityvice_id: 44,
+      name: 'Lime',
+      calories: 25,
+      fat: 0.1,
+      sugar: 1.7,
+      carbohydrates: 8.4,
+      protein: 0.3
+    }
   ];
 
   beforeAll(async () => {
@@ -29,7 +47,8 @@ describe('LedgersService', () => {
         {
           provide: LedgersRepository,
           useValue: {
-            getConsumptions: jest.fn()
+            getConsumptions: jest.fn(),
+            bulkCreate: jest.fn()
           }
         },
         {
@@ -99,29 +118,34 @@ describe('LedgersService', () => {
 
   describe('createPurchase', () => {
     it('should throw error when total fruit calories exceed 1000 kcal', async () => {
-      locationsService.getLocationById = jest.fn().mockResolvedValue({ id: 1, name: 'Amsterdam'});
-      fruitsService.getFruitById = jest.fn().mockResolvedValue({ id: 1, name: 'Apple' });
-      fruitsService.getFruitNutritionalValue = jest.fn().mockResolvedValue({
-        calories: 1000
-      });
-      const createPurchaseDto = { fruitId: 1, locationId: 1, amount: 2 };
+      locationsService.getLocationById = jest.fn().mockResolvedValue({ id: 1, name: 'Amsterdam' });
+      fruitsService.getFruitsNutritionalValue = jest.fn().mockResolvedValue([
+        {
+          id: 1,
+          fruityvice_id: 44,
+          name: 'Lime',
+          calories: 1001,
+          fat: 0.1,
+          sugar: 1.7,
+          carbohydrates: 8.4,
+          protein: 0.3
+        }
+      ]);
+
       await expect(
-        service.createPurchase(createPurchaseDto)
+        service.createPurchase(defaultPurchaseInput)
       ).rejects
         .toThrow('Calories limit exceeded, is not possible to register this purchase');
     });
 
     it('should throw an error if an error occurs during purchase creation', async () => {
-      locationsService.getLocationById = jest.fn().mockResolvedValue({ id: 1, name: 'Amsterdam'});
-      fruitsService.getFruitById = jest.fn().mockResolvedValue({ id: 1, name: 'Apple' });
-      ledgersRepository.createPurchase = jest.fn().mockRejectedValue(new Error('Error message'));
-      fruitsService.getFruitNutritionalValue = jest.fn().mockResolvedValue({
-        calories: 10
-      });
-      const createPurchaseDto = { fruitId: 1, locationId: 1, amount: 2 };
-      expect(async () => {
-        await service.createPurchase(createPurchaseDto)
-      }).rejects.toThrow(
+      locationsService.getLocationById = jest.fn().mockResolvedValue({ id: 1, name: 'Amsterdam' });
+      ledgersRepository.bulkCreate = jest.fn().mockRejectedValue(new Error('Error message'));
+      fruitsService.getFruitsNutritionalValue = jest.fn().mockResolvedValue(defaultFruitStats);
+
+        await expect(
+          service.createPurchase(defaultPurchaseInput)
+      ).rejects.toThrow(
         'Error message'
       );
     });
