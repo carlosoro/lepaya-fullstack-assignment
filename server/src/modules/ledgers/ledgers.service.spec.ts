@@ -23,7 +23,7 @@ describe('LedgersService', () => {
         {
           provide: LocationsService,
           useValue: {
-            getLocationById: jest.fn()
+            getLocationById: jest.fn(),
           }
         },
         {
@@ -35,7 +35,8 @@ describe('LedgersService', () => {
         {
           provide: FruitsService,
           useValue: {
-            getFruitNutritionalValue: jest.fn()
+            getFruitNutritionalValue: jest.fn(),
+            getFruitById: jest.fn()
           }
         },
       ],
@@ -98,6 +99,8 @@ describe('LedgersService', () => {
 
   describe('createPurchase', () => {
     it('should throw error when total fruit calories exceed 1000 kcal', async () => {
+      locationsService.getLocationById = jest.fn().mockResolvedValue({ id: 1, name: 'Amsterdam'});
+      fruitsService.getFruitById = jest.fn().mockResolvedValue({ id: 1, name: 'Apple' });
       fruitsService.getFruitNutritionalValue = jest.fn().mockResolvedValue({
         calories: 1000
       });
@@ -109,6 +112,8 @@ describe('LedgersService', () => {
     });
 
     it('should throw an error if an error occurs during purchase creation', async () => {
+      locationsService.getLocationById = jest.fn().mockResolvedValue({ id: 1, name: 'Amsterdam'});
+      fruitsService.getFruitById = jest.fn().mockResolvedValue({ id: 1, name: 'Apple' });
       ledgersRepository.createPurchase = jest.fn().mockRejectedValue(new Error('Error message'));
       fruitsService.getFruitNutritionalValue = jest.fn().mockResolvedValue({
         calories: 10
