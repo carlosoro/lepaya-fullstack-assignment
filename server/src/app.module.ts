@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FruitsModule } from './fruits/fruits.module';
-import { LocationsModule } from './locations/locations.module';
-import { LedgersModule } from './ledgers/ledgers.module';
+import { FruitsModule } from './modules/fruits/fruits.module';
+import { LocationsModule } from './modules/locations/locations.module';
+import { LedgersModule } from './modules/ledgers/ledgers.module';
 import database from './config/database.config';
 
 @Module({

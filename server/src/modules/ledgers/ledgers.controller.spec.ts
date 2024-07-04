@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LedgersController } from './ledgers.controller';
 import { LedgersService } from './ledgers.service';
-import { LocationsService } from './../locations/locations.service';
+import { LocationsService } from '../locations/locations.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 describe('LedgersController', () => {

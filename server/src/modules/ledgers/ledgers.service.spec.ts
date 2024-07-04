@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LedgersService } from './ledgers.service';
-import { LocationsService } from './../locations/locations.service';
+import { LocationsService } from '../locations/locations.service';
 import { LedgersRepository } from './ledgers.repository';
 import { FruitsService } from './../fruits/fruits.service';
 

@@ -5,7 +5,7 @@ import { LedgersService } from './ledgers.service';
 import { LedgersRepository } from './ledgers.repository';
 import { LedgersController } from './ledgers.controller';
 import { FruitsModule } from './../fruits/fruits.module';
-import { LocationsModule } from './../locations/locations.module';
+import { LocationsModule } from '../locations/locations.module';
 
 @Module({
     imports: [

@@ -5,9 +5,9 @@ import { LedgersRepository } from './ledgers.repository';
 import { CreatePurchaseDto } from './dtos/createPurchase.dto';
 import { FruitsService } from './../fruits/fruits.service';
 import { GetReportDto } from './dtos/getReport.dto';
-import { Location } from './../locations/location.entity';
+import { Location } from '../locations/location.entity';
 import { Consumption, Report } from './types';
-import { LocationsService } from './../locations/locations.service';
+import { LocationsService } from '../locations/locations.service';
 
 @Injectable()
 export class LedgersService {
