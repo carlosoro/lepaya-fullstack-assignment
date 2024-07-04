@@ -14,7 +14,7 @@ export interface FruitReportResponse {
 }
 
 export interface MostConsumedFruit {
-    fruitId: string;
+    fruitId: number;
     amount: number;
     name: string;
 }
