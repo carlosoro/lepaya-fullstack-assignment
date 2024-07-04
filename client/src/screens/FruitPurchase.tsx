@@ -9,13 +9,15 @@ import CustomButton from "../components/Button";
 import Select from "../components/Select";
 import Input from "../components/Input";
 
+type FruitPurchase = {
+    fruitId: number;
+    amount: number;
+}
 function FruitPurchase() {
 
     const [locations, setLocations] = useState<Location[]>([]);
     const [fruits, setFruits] = useState<Fruit[]>([]);
     const [selectedLocation, setSelectedLocation] = useState<number>(0);
-    const [selectedFruit, setSelectedFruit] = useState<number>(0);
-    const [fruitAmount, setFruitAmount] = useState<number>(0);
     const [formSubmitDisabled, setFormSubmitDisabled] = useState<boolean>(true);
     const [alertState, setAlertState] = useState<AlertState>({
         show: false,
@@ -23,7 +25,7 @@ function FruitPurchase() {
         message: '',
         type: 'danger'
     });
-
+    const [fruitPurchases, setFruitPurchases] = useState<FruitPurchase [] | []>([{fruitId: 0, amount: 0}]);
     useEffect(() => {
         const getLocationOptions = async () => {
             const response = await getLocations();
@@ -40,7 +42,7 @@ function FruitPurchase() {
     useEffect(() => {
         setFormSubmitDisabled(!isFormValid());
         resetAlertState();
-    }, [selectedLocation, selectedFruit, fruitAmount]);
+    }, [selectedLocation, fruitPurchases]);
 
     const resetAlertState = () => {
         setAlertState({
@@ -52,23 +54,21 @@ function FruitPurchase() {
     }
 
     const isFormValid = (): boolean => {
-        return selectedLocation !== 0
-            && selectedFruit !== 0
-            && fruitAmount > 0;
+        return selectedLocation !== 0 && fruitPurchases.length > 0 && fruitPurchases.every(fruit => fruit.fruitId !== 0 && fruit.amount > 0);
     }
 
     const handleLocationChange = (event: BaseSyntheticEvent) => {
         setSelectedLocation(event.target.value);
     }
 
-    const handleFruitChange = (event: BaseSyntheticEvent) => {
-        setSelectedFruit(Number(event.target.value));
+    const handleFruitPurchaseChanges = ( index: number, property : 'fruitId' | 'amount', value: number) => {
+        const newRows = [...fruitPurchases];
+        newRows[index][property] = Number(value);
+        setFruitPurchases(newRows);
     }
 
-    const handleFruitAmountChange = (event: BaseSyntheticEvent) => {
-        const amount = parseFloat(event.target.value) || 0;
-        event.target.value = amount;
-        setFruitAmount(amount);
+    const addFruitPurchaseRow = () => {
+        setFruitPurchases([...fruitPurchases, {fruitId: 0, amount: 0}]);
     }
 
     const handleSubmit = async () => {
@@ -83,8 +83,7 @@ function FruitPurchase() {
             }
             const response = await createPurchase({
                 locationId: selectedLocation,
-                fruitId: selectedFruit,
-                amount: fruitAmount
+                fruits: fruitPurchases,
             });
 
             if (response) {
@@ -132,24 +131,30 @@ function FruitPurchase() {
                     </Col>
                 </Row>
                 <Row>
-                    <Col>
-                        <Select
-                            label="Fruit"
-                            value={selectedFruit}
-                            onChange={handleFruitChange}
-                            options={fruits.map(fruit => ({ key: fruit.id, value: fruit.id, text: fruit.name }))}
-                        />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <Input
-                            type="number"
-                            label="Amount"
-                            value={fruitAmount}
-                            onChange={handleFruitAmountChange}
-                        />
-                    </Col>
+                        <Row>
+                        <CustomButton variant={'outline-primary'} onClick={addFruitPurchaseRow} isDisabled={false}
+                                      text=' + Add Fruit'/>
+                        </Row>
+                {fruitPurchases.map((fruit,index) => (
+                    <Row key={index}>
+                        <Col>
+                            <Select
+                                label="Fruit"
+                                value={fruit.fruitId}
+                                onChange={(e) => handleFruitPurchaseChanges(index, 'fruitId', e.target.value)}
+                                options={fruits.map(fruit => ({key: fruit.id, value: fruit.id, text: fruit.name}))}
+                            />
+                        </Col>
+                        <Col>
+                            <Input
+                                type="number"
+                                label="Amount"
+                                value={fruit.amount}
+                                onChange={(e) => handleFruitPurchaseChanges(index, 'amount', e.target.value)}
+                            />
+                        </Col>
+                    </Row>
+                ))}
                 </Row>
                 <Row>
                     <Col>

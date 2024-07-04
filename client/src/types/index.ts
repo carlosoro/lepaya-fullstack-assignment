@@ -1,5 +1,9 @@
 export interface Purchase {
     locationId: number;
+    fruits: FruitPurchase[];
+}
+
+export interface FruitPurchase {
     fruitId: number;
     amount: number;
 }

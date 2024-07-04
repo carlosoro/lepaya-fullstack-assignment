@@ -16,11 +16,11 @@ export const getReport = async (locationId: number, year: number): Promise<Fruit
     return await getFruitReport(locationId, year);
 }
 
-export const createPurchase = async ({ locationId, fruitId, amount }: Purchase): Promise<FruitCreationResponse> => {
-    if (!locationId || !fruitId || !amount) {
+export const createPurchase = async ({ locationId, fruits  }: Purchase): Promise<FruitCreationResponse> => {
+    if (!locationId || !fruits || !fruits.length) {
         throw new Error('Invalid input provided');
     }
-    return createFruitPurchase({ locationId, fruitId, amount });
+    return createFruitPurchase({ locationId, fruits });
 }
 
 export const getLocations = async (): Promise<Location[]> => {

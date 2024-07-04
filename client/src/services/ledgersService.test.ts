@@ -58,30 +58,19 @@ describe('ledgersService', () => {
         it('should throw an error if locationId is zero', async () => {
             const purchase = {
                 locationId: 0,
-                fruitId: 1,
-                amount: 10
+                fruits: [
+                    { fruitId: 1, amount: 10 }
+                ]
             }
             await expect(
                 createPurchase(purchase)
             ).rejects
                 .toThrow('Invalid input provided');
         });
-        it('should throw an error if fruitId is zero', async () => {
+        it('should throw an error if fruits array is empty', async () => {
             const purchase = {
                 locationId: 1,
-                fruitId: 0,
-                amount: 10
-            }
-            await expect(
-                createPurchase(purchase)
-            ).rejects
-                .toThrow('Invalid input provided');
-        });
-        it('should throw an error if fruitId is zero', async () => {
-            const purchase = {
-                locationId: 1,
-                fruitId: 1,
-                amount: 0
+                fruits: []
             }
             await expect(
                 createPurchase(purchase)
@@ -91,11 +80,12 @@ describe('ledgersService', () => {
         it('should return a report when valid input is provided', () => {
             mockCreateFruitPurchase = jest.spyOn(LedgersAPI, 'createFruitPurchase')
                 .mockResolvedValue(validFruitCreationResponse);
-            const purchase = {
-                locationId: 1,
-                fruitId: 1,
-                amount: 10
-            }
+                const purchase = {
+                    locationId: 1,
+                    fruits: [
+                        { fruitId: 1, amount: 10 }
+                    ]
+                }
             expect(createPurchase(purchase))
                 .resolves
                 .toEqual(validFruitCreationResponse);
