@@ -17,3 +17,9 @@ export type Report = {
 export type InsertedPurchase = {
     id: number
 }
+
+export type FruitPurchaseItem = {
+    fruitId: number,
+    locationId: number,
+    amount: number
+}

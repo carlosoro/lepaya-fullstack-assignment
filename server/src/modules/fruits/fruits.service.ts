@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { FruityViceClient } from './clients/fruityvice.client';
 import { FruitsRepository } from './fruits.repository';
-import { FruitNutricionalInfo } from './types';
+import { FruitNutricionalInfo, FruitPurchaseRequest } from './types';
 import { Fruit } from './fruit.entity';
 
 @Injectable()
@@ -11,22 +11,29 @@ export class FruitsService {
         private readonly fruityViceClient: FruityViceClient
     ) { }
 
-    async getFruitNutritionalValue(fruitId: number): Promise<FruitNutricionalInfo> | null {
-        const fruitData = await this.fruitsRepository.getById(fruitId);
-        if (!fruitData) {
-            throw new Error('Fruit not found');
+    async getFruitsNutritionalValue(fruits: FruitPurchaseRequest[]): Promise<FruitNutricionalInfo[]> {
+        const fruitStats: FruitNutricionalInfo[] = [];
+        const purchaseFruitIds = fruits.map(fruit => fruit.fruitId);
+        const fruitsData = await this.fruitsRepository.findByIds(purchaseFruitIds);
+        if (!fruitsData) {
+            throw new Error('Fruits data not found');
         }
-        const fruitStats = await this.fruityViceClient.getById(fruitData.fruityvice_id);
-        if (!fruitStats) {
-            return {
-                calories: 0,
-                carbohydrates: 0,
-                fat: 0,
-                protein: 0,
-                sugar: 0,
-            };
+        const fruityStats = await this.fruityViceClient.getAll();
+        if (!fruityStats) {
+            return [];
         }
-        return fruitStats.nutritions;
+        for(const fruitData of fruitsData) {
+            const fruityStat = fruityStats.find(fruityStat => fruityStat.id === fruitData.fruityvice_id);
+            if (fruityStat) {
+                fruitStats.push({
+                    id: fruitData.id,
+                    fruityvice_id: fruityStat.id,
+                    name: fruityStat.name,
+                    ...fruityStat.nutritions
+                });
+            }
+        }
+        return fruitStats;
     }
 
     getFruitById(fruitId: number): Promise<Fruit> {

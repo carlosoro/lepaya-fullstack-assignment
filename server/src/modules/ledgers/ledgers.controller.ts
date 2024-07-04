@@ -25,7 +25,8 @@ export class LedgersController {
     }
 
     @Post('purchases')
-    async createPurchase(@Body(ValidationPipe) createPurchaseDto: CreatePurchaseDto): Promise<InsertedPurchase | HttpException>{
+    async createPurchase(@Body(ValidationPipe) createPurchaseDto: CreatePurchaseDto): Promise<InsertedPurchase[] | HttpException>
+    {
         try {
             return await this.ledgersService.createPurchase(createPurchaseDto);
         } catch (error) {

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Fruit } from "./fruit.entity";
-import { Repository } from "typeorm";
+import { Repository, In } from "typeorm";
 
 @Injectable()
 export class FruitsRepository {
@@ -12,5 +12,9 @@ export class FruitsRepository {
 
     getById(fruitId: number): Promise<Fruit> {
         return this.fruitsRepository.findOneBy({ id: fruitId});
+    }
+
+    findByIds(fruitIds: number[]): Promise<Fruit[]> {
+        return this.fruitsRepository.findBy({ id: In(fruitIds)})
     }
 }

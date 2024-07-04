@@ -19,18 +19,32 @@ export class LedgersService {
         private readonly fruitsService: FruitsService
     ) { }
 
-    async createPurchase(createPurchaseDto: CreatePurchaseDto): Promise<InsertedPurchase> {
+    async createPurchase(createPurchaseDto: CreatePurchaseDto): Promise<InsertedPurchase[]> 
+    {
         try {
-            await this.validatePurchaseInput(createPurchaseDto);
-            const fruitNutritionalValue = await this.fruitsService.getFruitNutritionalValue(createPurchaseDto.fruitId);
-            const totalCalories = fruitNutritionalValue.calories * createPurchaseDto.amount;
-            if (totalCalories > 1000) {
-                throw new AppError(
-                    'Calories limit exceeded, is not possible to register this purchase',
-                    400
+            await this.validatePurchaseLocation(createPurchaseDto);
+            const fruitsNutritionalValue = await this.fruitsService.getFruitsNutritionalValue(createPurchaseDto.fruits);
+            let totalCalories = 0;
+            for (const fruit of createPurchaseDto.fruits) {
+                const fruitNutritionalValue = fruitsNutritionalValue.find(
+                    fruitNutritionalValue => fruitNutritionalValue.id === fruit.fruitId
                 );
+                if (!fruitNutritionalValue) {
+                    continue;
+                }
+                totalCalories += fruitNutritionalValue.calories * fruit.amount;
+                if (totalCalories > 1000) {
+                    throw new AppError(
+                        'Calories limit exceeded, is not possible to register this purchase',
+                        400
+                    );
+                }
             }
-            return await this.ledgersRepository.createPurchase(createPurchaseDto);
+            return await this.ledgersRepository.bulkCreate(createPurchaseDto.fruits.map(fruit => ({
+                locationId: createPurchaseDto.locationId,
+                fruitId: fruit.fruitId,
+                amount: fruit.amount
+            })));
         } catch (error) {
             //TODO: add logging here
             throw error;
@@ -97,18 +111,11 @@ export class LedgersService {
         return totalConsumption / location.headcount;
     }
 
-    private async validatePurchaseInput(createPurchaseDto: CreatePurchaseDto): Promise<void> {
+    private async validatePurchaseLocation(createPurchaseDto: CreatePurchaseDto): Promise<void> {
         const location = await this.locationsService.getLocationById(createPurchaseDto.locationId);
         if (!location) {
             throw new AppError(
                 'Location not found, is not possible to register this purchase',
-                400
-            );
-        }
-        const fruit = await this.fruitsService.getFruitById(createPurchaseDto.fruitId);
-        if (!fruit) {
-            throw new AppError(
-                'Fruit not found, is not possible to register this purchase',
                 400
             );
         }

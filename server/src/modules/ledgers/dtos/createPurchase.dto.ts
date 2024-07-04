@@ -1,16 +1,23 @@
 import { Type } from "class-transformer";
-import { IsInt } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsInt, ValidateNested } from "class-validator";
 
-export class CreatePurchaseDto {
+class FruitPurchaseObj {
     @IsInt()
     @Type(() => Number)
     fruitId: number;
 
     @IsInt()
     @Type(() => Number)
-    locationId: number;
+    amount: number;
+}
+
+export class CreatePurchaseDto {
+    @IsArray()
+    @ArrayNotEmpty()
+    @ValidateNested({ each: true })
+    fruits: FruitPurchaseObj[];
 
     @IsInt()
     @Type(() => Number)
-    amount: number;
+    locationId: number;
 }

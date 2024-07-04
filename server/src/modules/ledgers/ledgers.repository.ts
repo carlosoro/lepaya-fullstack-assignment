@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Ledger } from "./entities/ledger.entity";
 import { Between, LessThan, Repository } from "typeorm";
-import { ConsumptionFilters, InsertedPurchase } from "./types";
+import { ConsumptionFilters, FruitPurchaseItem, InsertedPurchase } from "./types";
 import { CreatePurchaseDto } from "./dtos/createPurchase.dto";
 
 @Injectable()
@@ -22,16 +22,14 @@ export class LedgersRepository {
         });
     }
 
-    async createPurchase(createPurchaseDto: CreatePurchaseDto): Promise<InsertedPurchase>{
-        const insertResult = await this.ledgersRepository.insert({
-            amount: createPurchaseDto.amount,
-            fruit_id: createPurchaseDto.fruitId,
-            location_id: createPurchaseDto.locationId,
-            time: new Date().toISOString()
-        });
-        const insertedId: InsertedPurchase = {
-            id: insertResult.generatedMaps[0].id
-        };
-        return insertedId;
+    async bulkCreate(fruitsPurchase: FruitPurchaseItem[]): Promise<InsertedPurchase[]>{
+        const insertResult = await this.ledgersRepository.insert(fruitsPurchase.map(fruitPurchase => ({
+            location_id: fruitPurchase.locationId,
+            fruit_id: fruitPurchase.fruitId,
+            amount: fruitPurchase.amount
+        })));
+        console.log(insertResult);
+        const insertedIds = insertResult.identifiers as InsertedPurchase[];
+        return insertedIds;
     }
 }
