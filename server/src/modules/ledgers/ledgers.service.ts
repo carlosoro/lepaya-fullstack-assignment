@@ -60,18 +60,18 @@ export class LedgersService {
         if (!consumedFruits.length) {
             return null;
         }
-        consumedFruits.forEach(consumedFruit => {
-            const index = consumptionByFruit.findIndex(fruit => fruit.fruitId === consumedFruit.fruit_id);
-            if (index === -1) {
+        for(const consumedFruit of consumedFruits) {
+            const consumption = consumptionByFruit.find(fruit => fruit.fruitId === consumedFruit.fruit_id);
+            if (!consumption) {
                 consumptionByFruit.push({
                     fruitId: consumedFruit.fruit_id,
                     amount: Math.abs(consumedFruit.amount),
                     name: consumedFruit.fruit.name,
                 });
             } else {
-                consumptionByFruit[index].amount += Math.abs(consumedFruit.amount);
+                consumption.amount += Math.abs(consumedFruit.amount);
             }
-        });
+        }
         consumptionByFruit.sort((a, b) => b.amount - a.amount);
         return consumptionByFruit[0];
     }
