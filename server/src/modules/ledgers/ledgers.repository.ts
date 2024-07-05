@@ -28,7 +28,6 @@ export class LedgersRepository {
             fruit_id: fruitPurchase.fruitId,
             amount: fruitPurchase.amount
         })));
-        console.log(insertResult);
         const insertedIds = insertResult.identifiers as InsertedPurchase[];
         return insertedIds;
     }

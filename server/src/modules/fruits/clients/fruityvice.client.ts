@@ -26,7 +26,6 @@ export class FruityViceClient {
         const baseUrl = this.configService.get<string>('fruityvice.baseUrl');
         try {
             const response =  await this.httpService.axiosRef.get(`${baseUrl}/api/fruit/all`);
-            console.log(response.data);
             return response.data;
         } catch (error) {
             return null;
