@@ -76,6 +76,7 @@ describe('LedgersService', () => {
   describe('getConsumptionReports', () => {
     it('should return an a default response when no consumptions are found', async () => {
       ledgersRepository.getConsumptions = jest.fn().mockResolvedValue([]);
+      locationsService.getLocationById = jest.fn().mockResolvedValue({ id: 1, name: 'Amsterdam' });
       const expectedResponse = {
         mostConsumedFruit: null,
         averageFruitConsumption: 0
@@ -103,7 +104,7 @@ describe('LedgersService', () => {
       expect(result).toEqual(expectedResponse);
     });
 
-    it('should return averageFruitConsumption=0 if location is not retrieved', async () => {
+    it('should return error if location is not found', async () => {
       ledgersRepository.getConsumptions = jest.fn().mockResolvedValue(defaultConsumptions);
       locationsService.getLocationById = jest.fn().mockResolvedValue(null);
       const expectedResponse = {
@@ -111,8 +112,7 @@ describe('LedgersService', () => {
         averageFruitConsumption: 0
       };
       const getReportDto = { year: 2021, locationId: 1 };
-      const result = await service.getConsumptionReports(getReportDto);
-      expect(result).toEqual(expectedResponse);
+      await expect(service.getConsumptionReports(getReportDto)).rejects.toThrow('Location not found, is not possible to process request');
     });
   });
 

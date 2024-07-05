@@ -22,7 +22,7 @@ export class LedgersService {
     async createPurchase(createPurchaseDto: CreatePurchaseDto): Promise<InsertedPurchase[]> 
     {
         try {
-            await this.validatePurchaseLocation(createPurchaseDto);
+            await this.validateLocation(createPurchaseDto.locationId);
             const fruitsNutritionalValue = await this.fruitsService.getFruitsNutritionalValue(createPurchaseDto.fruits);
             let totalCalories = 0;
             for (const fruit of createPurchaseDto.fruits) {
@@ -53,6 +53,7 @@ export class LedgersService {
 
     async getConsumptionReports(getReportDto: GetReportDto): Promise<Report> {
         try {
+            await this.validateLocation(getReportDto.locationId);
             const consumptions = await this.getConsumptions({
                 year: getReportDto.year,
                 locationId: getReportDto.locationId
@@ -111,11 +112,11 @@ export class LedgersService {
         return totalConsumption / location.headcount;
     }
 
-    private async validatePurchaseLocation(createPurchaseDto: CreatePurchaseDto): Promise<void> {
-        const location = await this.locationsService.getLocationById(createPurchaseDto.locationId);
+    private async validateLocation(locationId: number ): Promise<void> {
+        const location = await this.locationsService.getLocationById(locationId);
         if (!location) {
             throw new AppError(
-                'Location not found, is not possible to register this purchase',
+                'Location not found, is not possible to process request',
                 400
             );
         }
