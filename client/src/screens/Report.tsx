@@ -1,24 +1,24 @@
-import { Card, Col } from "react-bootstrap";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import { getReport, getLocations } from "../services/ledgersService";
-import { BaseSyntheticEvent, useEffect, useState } from "react";
-import { FruitReportResponse, Location, AlertState } from "../types";
-import CustomAlert from "../components/Alert";
-import Select from "../components/Select";
-import CustomButton from "../components/Button";
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
+import { Card, Col, Row, Container } from 'react-bootstrap';
+import { getReport, getLocations } from '../services/ledgersService';
+import { FruitReportResponse, Location, AlertState } from '../types';
+import CustomAlert from '../components/Alert';
+import Select from '../components/Select';
+import CustomButton from '../components/Button';
 
 function Report() {
     const [locations, setLocations] = useState<Location[]>([]);
     const [selectedLocation, setSelectedLocation] = useState<number>(0);
     const [selectedYear, setSelectedYear] = useState<number>(0);
-    const [reportResult, setReportResult] = useState<FruitReportResponse | null>(null);
+    const [reportResult, setReportResult] = useState<FruitReportResponse | null>(
+        null
+    );
     const [formSubmitDisabled, setFormSubmitDisabled] = useState<boolean>(true);
     const [alertState, setAlertState] = useState<AlertState>({
         show: false,
         header: 'Oh snap! You got an error!',
         message: '',
-        type: 'danger'
+        type: 'danger',
     });
 
     useEffect(() => {
@@ -30,20 +30,23 @@ function Report() {
         const getLocationOptions = async () => {
             const response = await getLocations();
             setLocations(response);
-        }
+        };
         getLocationOptions();
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        setReportResult(null);
+    }, [selectedLocation, selectedYear]);
 
     const years = [2016, 2017, 2018, 2019, 2020, 2021, 2022];
 
-
     const handleLocationChange = (event: BaseSyntheticEvent) => {
         setSelectedLocation(Number(event.target.value));
-    }
+    };
 
     const handleYearChange = (event: BaseSyntheticEvent) => {
         setSelectedYear(Number(event.target.value));
-    }
+    };
 
     const handleSubmit = async () => {
         try {
@@ -52,7 +55,7 @@ function Report() {
                     show: true,
                     header: 'Oh snap! You got an error!',
                     message: 'Make sure you selected filled all options and try again.',
-                    type: 'danger'
+                    type: 'danger',
                 });
             }
             const response = await getReport(selectedLocation, selectedYear);
@@ -60,40 +63,49 @@ function Report() {
                 setReportResult(response);
             }
         } catch (error) {
-            const message = (error as Error)?.message || 'An error occurred while generating the report.';
-            setAlertState({ show: true, header: 'Oh snap! You got an error!', message, type: 'danger' });
+            const message =
+                (error as Error)?.message ||
+                'An error occurred while generating the report.';
+            setAlertState({
+                show: true,
+                header: 'Oh snap! You got an error!',
+                message,
+                type: 'danger',
+            });
         }
-    }
+    };
     const resetAlertState = () => {
         setAlertState({
             show: false,
             header: 'Oh snap! You got an error!',
             message: '',
-            type: 'danger'
+            type: 'danger',
         });
-    }
+    };
     const isFormValid = (): boolean => {
         return selectedLocation !== 0 && selectedYear !== 0;
-    }
+    };
 
     const getLocationName = (): string => {
-        const location = locations.find(item => item.id === Number(selectedLocation));
+        const location = locations.find(
+            (item) => item.id === Number(selectedLocation)
+        );
         return location ? location.name : '';
-    }
+    };
 
     return (
         <Container fluid>
             <Row>
                 <Row>
                     <Col>
-                        {alertState.show &&
+                        {alertState.show && (
                             <CustomAlert
                                 type={alertState.type}
                                 onClose={resetAlertState}
                                 header={alertState.header}
                                 message={alertState.message}
                             />
-                        }
+                        )}
                     </Col>
                 </Row>
                 <Row>
@@ -104,21 +116,28 @@ function Report() {
                 <Row>
                     <Col>
                         <Select
-                            label="Location"
+                            label='Location'
                             value={selectedLocation}
                             onChange={handleLocationChange}
-                            options={locations.map(location => ({ key: location.id, value: location.id, text: location.name }))}
+                            options={locations.map((location) => ({
+                                key: location.id,
+                                value: location.id,
+                                text: location.name,
+                            }))}
                         />
-
                     </Col>
                 </Row>
                 <Row>
                     <Col>
                         <Select
-                            label="Year"
+                            label='Year'
                             value={selectedYear}
                             onChange={handleYearChange}
-                            options={years.map(year => ({ key: year, value: year, text: year.toString() }))}
+                            options={years.map((year) => ({
+                                key: year,
+                                value: year,
+                                text: year.toString(),
+                            }))}
                         />
                     </Col>
                 </Row>
@@ -128,27 +147,37 @@ function Report() {
                             variant='primary'
                             isDisabled={formSubmitDisabled}
                             onClick={handleSubmit}
-                            text="Submit" />
+                            text='Get report'
+                        />
                     </Col>
                 </Row>
             </Row>
-            <Row>
-                <Col>
-                    <Card>
-                        <Card.Header>Fruit Consumption Report {reportResult ? ` - Location: ${getLocationName()} | Year: ${selectedYear}` : ''}</Card.Header>
-                        <Card.Body>
-                            {reportResult ?
-                                <>
-                                    <Card.Text>Most consumed fruit: {reportResult.mostConsumedFruit.name}</Card.Text>
-                                    <Card.Text>Amount consumed: {reportResult.mostConsumedFruit.amount}</Card.Text>
-                                </>
-                                : `Report will be displayed here.`}
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
+            {reportResult ? (
+                <Row>
+                    <Col>
+                        <Card>
+                            <Card.Header>
+                                Fruit Consumption Report - Location:{' '}
+                                <span className='fw-bold'>{getLocationName()}</span> | Year:{' '}
+                                <span className='fw-bold'>{selectedYear}</span>
+                            </Card.Header>
+
+                            <Card.Body>
+                                <Card.Text>
+                                    Most consumed fruit: <span className='fw-bold'>{reportResult.mostConsumedFruit.name}</span>
+                                </Card.Text>
+                                <Card.Text>
+                                    Amount consumed: <span className='fw-bold'>{reportResult.mostConsumedFruit.amount}</span>
+                                </Card.Text>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                </Row>
+            ) : (
+                <></>
+            )}
         </Container>
-    )
+    );
 }
 
 export default Report;
