@@ -38,7 +38,7 @@ function Report() {
         setReportResult(null);
     }, [selectedLocation, selectedYear]);
 
-    const years = [2016, 2017, 2018, 2019, 2020, 2021, 2022];
+    const years = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
 
     const handleLocationChange = (event: BaseSyntheticEvent) => {
         setSelectedLocation(Number(event.target.value));
@@ -167,7 +167,7 @@ function Report() {
                                     Most consumed fruit: <span className='fw-bold'>{reportResult.mostConsumedFruit.name}</span>
                                 </Card.Text>
                                 <Card.Text>
-                                    Amount consumed: <span className='fw-bold'>{reportResult.mostConsumedFruit.amount}</span>
+                                    Average fruit consumed per person: <span className='fw-bold'>{reportResult.averageFruitConsumption}</span>
                                 </Card.Text>
                             </Card.Body>
                         </Card>
