@@ -5,8 +5,8 @@
 - Node (This was build with version 21.1.0)
 
 ## Running the project
-- First we spin up the postgres docker service: `docker-compose up -d`
-- Once the docker service is up, we run the project: `npm start`
+- First we spin up the postgres docker service, in the project's root run: `docker-compose up -d`
+- Once the docker service is up, in the project root, run: `npm start`
 - After the command finish executing, the frontend will be available through url: `http://localhost:5173` and the backend api will be available through: `http://localhost:3000`
 
 ## Assumptions for assigment solution
@@ -49,7 +49,7 @@ curl --location 'http://localhost:3000/ledgers/purchases' \
 
 ## Tests
 
-This project has test coverage. To run the test just do the following:
+This project has test coverage. To run the test, in the project's root just do the following:
 - Frontent: run `npm run test:client`
 - Backend
     - Unit tests: run `npm run test:server`
