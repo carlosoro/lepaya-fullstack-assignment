@@ -11,6 +11,8 @@ I would also add more input validation in the server side, not every case is cov
 
 In the client I would create a more component based design, there are some components created, but more progress can be done there.
 
+I would also add a global state management (redux), so the state can be easily shared between components in the application and help scalability.
+
 And maybe improve ui design in the frontend 😁, my priority was to deliver functionality, so the ui is quite simple.
 
 ## Describe your solution in plain english. Point out your design decisions and the reasoning behind them.
@@ -32,7 +34,7 @@ In the frontend, the project structure design was ket simple and priorityzing se
 
 The frontend shows a simple layout with one menu at the top with two links, reports showing the form to retrieve the fruit consumption report an the purchases with the form to register purchases.
 
-### Beckend
+### Backend
 
 In the backend, Nestjs was used to speed up development. The advantage is that we can start with a domain based structure out of the box where we isolate similar functionality into modules having a mantainable and sclalable codebase.
 

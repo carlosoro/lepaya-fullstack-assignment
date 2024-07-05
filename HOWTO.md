@@ -4,6 +4,8 @@
 - Docker Compose
 - Node (This was build with version 21.1.0)
 
+### Note: To run this application, you need to have both ports 3000 and 5137 available.
+
 ## Running the project
 - First we spin up the postgres docker service, in the project's root run: `docker-compose up -d`
 - Once the docker service is up, in the project root, run: `npm start`
